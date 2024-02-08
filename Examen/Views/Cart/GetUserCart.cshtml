@@ -1,0 +1,60 @@
+﻿@model ShoppingCart
+@{
+    ViewData["Title"] = "GetUserCart";
+}
+
+<div style="width:90%; margin:auto" class="mt-2">
+    @if (Model != null && Model.CartDetails != null && Model.CartDetails.Count > 0)
+    {
+        <h5>Cosul Meu</h5>
+
+        <table class="table table-striped">
+            <tr>
+                <th>Phone</th>
+                <th>Image</th>
+                <th>Model</th>
+                <th>Pret Unitar</th>
+                <th>Pret total</th>
+                <th>Actiune</th>
+            </tr>
+            @foreach (var item in Model.CartDetails)
+            {
+                <tr>
+                    <td>@item.Phone.PhoneName</td>
+                    <td>
+                        @if (string.IsNullOrEmpty(item.Phone.Image))
+                        {
+                            <img src="/images/NoImage.jpg" style="width:80px;height:100px"/>
+                        }
+                        else
+                        {
+                            <img src="/images/@item.Phone.Image" style="width:80px;height:100px"/>
+                        }
+                    </td>
+                    <td>@item.Phone.Model.ModelName</td>
+                    <td>@item.Phone.Price X @item.Quantity</td>
+                    <td>@(item.Phone.Price*item.Quantity)</td>
+                    <td>
+                        <a class="btn btn-info" href="/Cart/AddItem?PhoneId=@item.PhoneId&&redirect=1">+</a>
+                        <a class="btn btn-info" href="/Cart/removeitem?PhoneId=@item.PhoneId">-</a>
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div class="my-2">
+            <h5>Total: </h5> 
+            @(Model.CartDetails.Select(item=>item.Phone.Price*item.Quantity).Sum()) Lei
+
+        </div>
+
+        <div class="my-2">
+            <a class="btn btn-primary" href="/Cart/Checkout">Cumpara</a>
+        </div>
+    }
+    else
+    {
+        <h5>Cosul este gol</h5>
+    }
+</div>
+

@@ -1,0 +1,71 @@
+﻿@page
+@using Microsoft.AspNetCore.Http.Features
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "Autentificare cu doi factori (2FA)";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h3>@ViewData["Title"]</h3>
+@{
+    var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+    @if (consentFeature?.CanTrack ?? true)
+    {
+        @if (Model.Is2faEnabled)
+        {
+            if (Model.RecoveryCodesLeft == 0)
+            {
+                <div class="alert alert-danger">
+                    <strong>Nu mai aveți coduri de recuperare.</strong>
+                    <p>Trebuie să vă <a asp-page="./GenerateRecoveryCodes">generați un nou set de coduri de recuperare</a> înainte de a vă putea conecta cu un cod de recuperare.</p>
+                </div>
+            }
+            else if (Model.RecoveryCodesLeft == 1)
+            {
+                <div class="alert alert-danger">
+                    <strong>Mai aveți 1 cod de recuperare.</strong>
+                    <p>Trebuie să vă <a asp-page="./GenerateRecoveryCodes">generați un nou set de coduri de recuperare</a>.</p>
+                </div>
+            }
+            else if (Model.RecoveryCodesLeft <= 3)
+            {
+                <div class="alert alert-warning">
+                    <strong>Aveți @Model.RecoveryCodesLeft coduri de recuperare rămase.</strong>
+                    <p>Ar trebui <a asp-page="./GenerateRecoveryCodes">generați un nou set de coduri de recuperare</a>.</p>
+                </div>
+            }
+
+            if (Model.IsMachineRemembered)
+            {
+                <form method="post" style="display: inline-block">
+                    <button type="submit" class="btn btn-primary">Uitați de acest browser</button>
+                </form>
+            }
+            <a asp-page="./Disable2fa" class="btn btn-primary">Dezactivați 2FA</a>
+            <a asp-page="./GenerateRecoveryCodes" class="btn btn-primary">Resetați codurile de recuperare</a>
+        }
+
+        <h4>Aplicația de autentificare</h4>
+        @if (!Model.HasAuthenticator)
+        {
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Adăugați aplicația de autentificare</a>
+        }
+        else
+        {
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Configurați aplicația de autentificare</a>
+            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-primary">Resetați aplicația de autentificare</a>
+        }
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <strong>Politica de confidențialitate și cookie-uri nu au fost acceptate.</strong>
+            <p>Trebuie să acceptați politica înainte de a putea activa autentificarea cu doi factori.</p>
+        </div>
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,27 @@
+﻿@page
+@model GenerateRecoveryCodesModel
+@{
+    ViewData["Title"] = "Generați coduri de recuperare cu autentificare în doi factori (2FA).";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h3>@ViewData["Title"]</h3>
+<div class="alert alert-warning" role="alert">
+    <p>
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <strong>Pune aceste coduri într-un loc sigur.</strong>
+    </p>
+    <p>
+        Dacă vă pierdeți dispozitivul și nu aveți codurile de recuperare, veți pierde accesul la contul dvs.
+    </p>
+    <p>
+        Generarea de noi coduri de recuperare nu modifică cheile utilizate în aplicațiile de autentificare. Dacă doriți să schimbați cheia
+        ar trebui folosit într-o aplicație de autentificare <a asp-page="./ResetAuthenticator">resetați cheile de autentificare.</a>
+    </p>
+</div>
+<div>
+    <form method="post">
+        <button class="btn btn-danger" type="submit">Generați coduri de recuperare</button>
+    </form>
+</div>

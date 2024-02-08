@@ -1,0 +1,83 @@
+﻿@model PhoneDisplayModel
+
+@{
+
+
+}
+<div class="my-2">
+    <form asp-action="Index" class="row row-cols-lg-auto g-3 align-items-center">
+  <div class="col-12">
+    <label class="visually-hidden" for="modelId">Firma</label>
+    <select class="form-select" id="modelId" name="modelId">
+      <option selected>Model</option>
+                @foreach(var Model in Model.Models)
+                {
+                    <option value="@Model.Id">@Model.ModelName</option>
+                }
+    </select>
+  </div>
+        <div class="col-12">
+            <label class="visually-hidden" for="sterm">Name Phone:</label>
+            <div class="input-group">
+                <div class="input-group-text"></div>
+                <input type="text" class="form-control" value="@Model.STerm" id="sterm" name="sterm" placeholder="Name Phone:">
+            </div>
+        </div>
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Cauta</button>
+    <a href="/Home/Index" type="reset" class="btn btn-dark">Reset</a>
+  </div>
+</form>
+</div>
+<div class="w-100 mt-4 d-flex flex-wrap">
+    @foreach (var Phone in Model.Phones){
+
+        <div class="card mx-2 mb-4" style="width: 16rem;">
+            @if (string.IsNullOrEmpty(Phone.Image))
+            {
+                <img style="width:100%;height:280px" src="https://lcdn.altex.ro/media/catalog/product/i/p/iphone_15_pro_natural_titanium_pdp_image_position_1_wwen_fc0946e7.jpg" class="card-img-top" alt="...">
+
+            }
+            else
+            {
+                <img style="width:100%;height:280px" src="/images/@Phone.Image" class="card-img-top" alt="...">
+
+            }
+            <div class="card-body">
+            <h5 class="card-title">@Phone.PhoneName</h5>
+            <p class="card-text"> 
+                    <b>Compania: </b>@Phone.Company<br/>
+                    <b>Pret: </b>@Phone.Price <b> Lei</b>
+                </p>
+            <button type="button" onclick="add(@Phone.Id)" class="btn btn-primary">Adauga in Cos</button>
+        </div>
+    </div>
+    }
+</div>
+
+@section Scripts{
+    <script>
+        async function add(PhoneId) {
+            var usernameEl = document.getElementById("username");
+            if (usernameEl != null) {
+                var username = usernameEl.innerText;
+                if (username.length < 1) {
+                    window.location.href = "/Identity/Account/Login";
+                }
+            }
+
+            try {
+                var response = await fetch(`/Cart/AddItem?PhoneId=${PhoneId}`);
+                if (response.status == 200) {
+                    var result = await response.json();
+                    var cartCountEl = document.getElementById("cartCount");
+                    cartCountEl.innerHTML = result;
+                    window.location.href = "#cartCount";
+                    }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    </script>
+}
